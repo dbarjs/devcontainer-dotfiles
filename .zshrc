@@ -36,7 +36,35 @@ alias lintf="nr lint --fix"
 alias release="nr release"
 alias re="nr release"
 
+# -------------------------------- #
+# Vercel
+# -------------------------------- #
+
+alias v="npx vercel@latest"
+alias vprod="npx vercel@latest --prod"
+alias vbuild="npx vercel@latest build"
+alias vprebuilt="npx vercel@latest deploy --prebuilt"
+alias vdev="npx vercel@latest dev"
+alias vlogin="npx vercel@latest login"
+
+# -------------------------------- #
+# Dev Containers
+# -------------------------------- #
+
+# function to apply devcontainer templates with argument for the url of template
+apply_devcontainer_template() {
+  local template="ghcr.io/dbarjs/devcontainer-templates/$1"
+
+  echo "Applying devcontainer template from $template"
+
+  npx @devcontainers/cli@latest templates apply -t "$template"
+}
+
+alias applytemplate="apply_devcontainer_template"
+
+# ZSH
 DISABLE_AUTO_UPDATE=true
 DISABLE_UPDATE_PROMPT=true
 
+# Command history
 export HISTFILE=/commandhistory/.zsh_history 

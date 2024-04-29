@@ -1,0 +1,15 @@
+Host *
+	HashKnownHosts yes
+
+# Fairfax GitHub
+# example: workgit:ff-jbarros/ff-content.git
+Host workgit
+	HostName github.com
+	User git
+	IdentityFile ~/dotfiles/ntfairfaxdev_rsa.pub
+	IdentitiesOnly yes
+
+# Azure Repos
+Host ssh.dev.azure.com
+	IdentityFile ~/dotfiles/ntfairfaxdev_rsa.pub
+	IdentitiesOnly yes
