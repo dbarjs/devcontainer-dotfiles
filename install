@@ -1,0 +1,2 @@
+# Remove 1Passowrd agent config from SSH config file
+sed -i '/IdentityAgent ~\\/\\.1password\\/agent\\.sock/d' /home/node/.ssh/config
