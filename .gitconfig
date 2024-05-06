@@ -1,0 +1,22 @@
+[user]
+	name = Eduardo Barros
+  email = dbarjs@protonmail.com
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4IA3wEeeFfSrmnt4GtcrXeba14YzmhUV+J7kwZw0Ii
+
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
+
+[includeIf "gitdir/i:~/**"]
+  path = ~/git-config/local.gitconfig
+
+[includeIf "hasconfig:remote.*.url:git@ssh.dev.azure.com:v3/ntfairfaxdev/**"]
+  path = ~/git-config/ntfairfaxdev.gitconfig
+
+[includeIf "hasconfig:remote.*.url:git@ssh.dev.azure.com:v3/Fairfax-BR/**"]
+  path = ~/git-config/fairfax.gitconfig
+
+[credential]
+	helper = "!f() { /home/node/.vscode-server/bin/e170252f762678dec6ca2cc69aba1570769a5d39/node /tmp/vscode-remote-containers-c4a27101-1f83-4639-b9d3-3c4d64dffc65.js git-credential-helper $*; }; f"
