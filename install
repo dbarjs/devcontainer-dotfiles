@@ -1,2 +1,38 @@
-# Remove 1Passowrd agent config from SSH config file
-sed -i '/IdentityAgent ~\\/\\.1password\\/agent\\.sock/d' /home/node/.ssh/config
+#!/usr/bin/env bash
+
+ROOT_DIR=$(dirname "${BASH_SOURCE[0]:-$0}")
+cd "${ROOT_DIR}" || exit 127
+
+# shellcheck source=./packages.sh
+. packages.sh
+# shellcheck source=../scripts/distro.sh
+. scripts/distro.sh
+# shellcheck source=scripts/execs.sh
+. scripts/execs.sh
+# shellcheck source=scripts/helpers.sh
+. scripts/helpers.sh
+# shellcheck source=scripts/logging.sh
+. scripts/logging.sh
+# shellcheck source=scripts/utils.sh
+. scripts/utils.sh
+
+PROGRAM=$(basename "${BASH_SOURCE[0]:-$0}")
+VERSION=0.0.1
+
+function install_modules() {
+  # ===============================================
+  # Run all sub folders install script
+  # ===============================================
+  local dirs=$(find . -maxdepth 1 -mindepth 1 -type d -print | sed -e 's/.\///')
+
+  for dir in $dirs; do
+    if [ ! -f "$dir/install.sh" ]; then
+      continue
+    fi
+
+    log_section "${dir}"
+    ./"${dir}"/install.sh
+  done
+}
+
+install_modules

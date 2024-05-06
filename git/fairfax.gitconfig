@@ -1,3 +1,9 @@
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
+
 [user]
   name = José Eduardo Barros
   email = jbarros@fairfax.com.br

@@ -1,3 +1,9 @@
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
+
 [user]
 	name = Eduardo Barros
   email = dbarjs@protonmail.com
