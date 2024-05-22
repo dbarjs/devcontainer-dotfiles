@@ -7,8 +7,8 @@
 [includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
   path = ~/dotfiles/git/github.gitconfig
 
-[includeIf "hasconfig:remote.*.url:git@ssh.dev.azure.com:v3/ntfairfaxdev/**"]
+[includeIf "hasconfig:remote.*.url:git@ntfairfaxdev:v3/ntfairfaxdev/**"]
   path = ~/dotfiles/git/ntfairfaxdev.gitconfig
 
-[includeIf "hasconfig:remote.*.url:git@ssh.dev.azure.com:v3/Fairfax-BR/**"]
-  path = ~/dotfiles/git/fairfax.gitconfig
+[includeIf "hasconfig:remote.*.url:git@fairfaxbr:v3/Fairfax-BR/**"]
+  path = ~/dotfiles/git/fairfaxbr.gitconfig

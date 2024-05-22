@@ -15,6 +15,27 @@ plugins=(
 # https://ohmyz.sh/
 source ~/.oh-my-zsh/oh-my-zsh.sh
 
+# TODO: move to separate file
+read_env() {
+  local filePath="${1:-.env}"
+
+  if [ ! -f "$filePath" ]; then
+    echo "missing ${filePath}"
+    exit 1
+  fi
+
+  # echo "Reading $filePath"
+  
+  while read -r LINE; do
+    # Remove leading and trailing whitespaces, and carriage return
+    CLEANED_LINE=$(echo "$LINE" | awk '{$1=$1};1' | tr -d '\r')
+
+    if [[ $CLEANED_LINE != '#'* ]] && [[ $CLEANED_LINE == *'='* ]]; then
+      export "$CLEANED_LINE"
+    fi
+  done < "$filePath"
+}
+
 # -------------------------------- #
 # Node Package Manager
 # -------------------------------- #
@@ -40,12 +61,68 @@ alias re="nr release"
 # Vercel
 # -------------------------------- #
 
-alias v="npx vercel@latest"
-alias vprod="npx vercel@latest --prod"
-alias vbuild="npx vercel@latest build"
-alias vprebuilt="npx vercel@latest deploy --prebuilt"
-alias vdev="npx vercel@latest dev"
-alias vlogin="npx vercel@latest login"
+# Run vercel command with the token from the env file
+# Example: vercel_cli deploy
+vercel_cli() {
+  # read env file
+  local envFile=".env"
+  read_env $envFile
+
+  # get all arguments or 'deploy' as default
+  local command="${@:-deploy}"
+
+  # get the vercel token loaded from the env file
+  local vercelToken="${VERCEL_TOKEN:-$VERCEL_TOKEN}"
+
+  # check if the vercel token is set
+  if [ -z "$vercelToken" ]; then
+    echo "VERCEL_TOKEN is not set"
+    exit 1
+  fi
+
+  # run the vercel command
+  # printf "Running vercel command: $command"
+  npx -y vercel@latest --token $vercelToken $command
+}
+
+alias v="vercel_cli"
+alias vprod="vercel_cli deploy --prod"
+alias vbuild="vercel_cli build"
+alias vprebuilt="vercel_cli deploy --prebuilt"
+alias vdev="vercel_cli dev"
+alias vi="vercel_cli init"
+alias vlogin="npx -y vercel@latest login"
+
+# Deploy to custom domain
+# Example: vcustom mydomain.com
+# https://vercel.com/docs/cli/deploy#deploying-to-a-custom-domain
+vcustom() {
+  local envFile=".env"
+
+  read_env $envFile
+
+  local customDomain="${1:-$VERCEL_CUSTOM_DOMAIN}"
+
+  printf "Deploying to custom domain $customDomain ..."
+
+  # run command and save stdout and stderr to files
+  vercel_cli deploy >.vercel/deployment-url.txt 2>.vercel/deployment-error.txt
+
+  # check the exit code
+  code=$?
+  if [ $code -eq 0 ]; then
+      printf "Deployment was successful"
+      printf "Assigning custom domain $customDomain to deployment"
+      # Now you can use the deployment url from stdout for the next step of your workflow
+      deploymentUrl=`cat .vercel/deployment-url.txt`
+      # run command and show output during the build
+      vercel_cli alias $deploymentUrl $customDomain
+  else
+      # Handle the error
+      errorMessage=`cat .vercel/deployment-error.txt`
+      printf "There was an error: $errorMessage"
+  fi
+}
 
 # -------------------------------- #
 # Dev Containers
