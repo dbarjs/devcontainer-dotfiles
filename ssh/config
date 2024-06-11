@@ -15,15 +15,18 @@ Host fairfaxgithub
   IdentityFile ~/dotfiles/public-keys/ntfairfaxdev_rsa.pub
   IdentitiesOnly yes
 
-# Azure Repos
-Host ssh.dev.azure.com
+# Azure Repos - Fairfax-BR
+# usage example: git@fairfaxbr:v3/Fairfax-BR/CLAIMS/ff-sinistros
+Host ntfairfaxdev
+  HostName ssh.dev.azure.com
+  User git
   IdentityFile ~/dotfiles/public-keys/ntfairfaxdev_rsa.pub
   IdentitiesOnly yes
 
 # Azure Repos - Fairfax-BR
-# usage example: git@fairfaxazure:v3/Fairfax-BR/CLAIMS/ff-sinistros
-Host fairfaxazure
+# usage example: git@fairfaxbr:v3/Fairfax-BR/CLAIMS/ff-sinistros
+Host fairfaxbr
   HostName ssh.dev.azure.com
   User git
-  IdentityFile ~/dotfiles/public-keys/fairfax_rsa.pub
+  IdentityFile ~/dotfiles/public-keys/fairfaxbr_rsa.pub
   IdentitiesOnly yes
