@@ -44,6 +44,7 @@ read_env() {
 alias nio="ni --prefer-offline"
 alias s="nr start"
 alias d="nr dev --no-fork"
+alias play="nr play --no-fork"
 alias b="nr build"
 alias bw="nr build --watch"
 alias t="nr test"
