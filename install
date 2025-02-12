@@ -1,38 +1,78 @@
 #!/usr/bin/env bash
 
-ROOT_DIR=$(dirname "${BASH_SOURCE[0]:-$0}")
-cd "${ROOT_DIR}" || exit 127
+# it must stop if is outside of the dotfiles "$HOME/dotfiles" directory
+if [ "$(pwd)" != "$HOME/dotfiles" ]; then
+  echo "You must run this script from the dotfiles directory."
+  exit 1
+fi
 
-# shellcheck source=./packages.sh
-. packages.sh
-# shellcheck source=../scripts/distro.sh
-. scripts/distro.sh
-# shellcheck source=scripts/execs.sh
-. scripts/execs.sh
-# shellcheck source=scripts/helpers.sh
-. scripts/helpers.sh
-# shellcheck source=scripts/logging.sh
-. scripts/logging.sh
-# shellcheck source=scripts/utils.sh
-. scripts/utils.sh
+DOTFILES_DIR="$HOME/dotfiles"
+OUTPUT_DIR="$DOTFILES_DIR/.output"
+GIT_CREDENTIAL_HELPER=$(git config --global credential.helper)
 
-PROGRAM=$(basename "${BASH_SOURCE[0]:-$0}")
-VERSION=0.0.1
-
-function install_modules() {
-  # ===============================================
-  # Run all sub folders install script
-  # ===============================================
-  local dirs=$(find . -maxdepth 1 -mindepth 1 -type d -print | sed -e 's/.\///')
-
-  for dir in $dirs; do
-    if [ ! -f "$dir/install.sh" ]; then
-      continue
-    fi
-
-    log_section "${dir}"
-    ./"${dir}"/install.sh
-  done
+cleanup() {
+  rm -rf .output
 }
 
-install_modules
+copy_templates() {
+  cp -r "$DOTFILES_DIR/templates" "$OUTPUT_DIR"
+}
+
+copy_old_files() {
+  # stop this function if .old directory already exists
+  if [ -d "$DOTFILES_DIR/.old" ]; then
+    echo "Old files already exist. Ignoring this step."
+    return
+  fi
+
+  mkdir -p .old
+
+  # copy .ssh dir if exists to .old/.ssh
+  if [ -d "$HOME/.ssh" ]; then
+    # check if is not a symlink
+    if [ ! -L "$HOME/.ssh" ]; then
+      cp -r "$HOME/.ssh" .old
+    fi
+  fi
+
+  # copy .gitconfig if exists to .old/.gitconfig
+  if [ -f "$HOME/.gitconfig" ]; then
+    # check if is not a symlink
+    if [ ! -L "$HOME/.gitconfig" ]; then
+      cp "$HOME/.gitconfig" .old
+    fi
+  fi
+
+  # copy .zshrc if exists to .old/.zshrc
+  if [ -f "$HOME/.zshrc" ]; then
+    # check if is not a symlink
+    if [ ! -L "$HOME/.zshrc" ]; then
+      cp "$HOME/.zshrc" .old
+    fi
+  fi
+}
+
+# prepare
+cleanup
+copy_templates
+copy_old_files
+
+# remove the part "IdentityAgent ~/.1password/agent.sock" from .output/.ssh/config
+sed -i '/IdentityAgent ~\/.1password\/agent.sock/d' .output/.ssh/config
+
+# create .ssh symlink
+rm -rf "$HOME/.ssh/config"
+ln -sfn "$OUTPUT_DIR/.ssh/config" "$HOME/.ssh/config"
+
+# create .gitconfig symlink
+rm -f "$HOME/.gitconfig"
+ln -sfn "$OUTPUT_DIR/.gitconfig" "$HOME/.gitconfig"
+
+# check GIT_CREDENTIAL_HELPER has value and use git CLI to set it using the current value
+if [ -n "$GIT_CREDENTIAL_HELPER" ]; then
+  git config --global credential.helper "$GIT_CREDENTIAL_HELPER"
+fi
+
+# replace .zshrc
+rm -f "$HOME/.zshrc"
+cp "$OUTPUT_DIR/.zshrc" "$HOME/.zshrc"

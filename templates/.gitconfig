@@ -1,14 +1,14 @@
 [includeIf "gitdir/i:~/**"]
-  path = ~/dotfiles/git/local.gitconfig
+  path = ~/dotfiles/.output/git/local.gitconfig
 
 [includeIf "hasconfig:remote.*.url:https://github.com/**"]
-  path = ~/dotfiles/git/github.gitconfig
+  path = ~/dotfiles/.output/git/github.gitconfig
 
 [includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
-  path = ~/dotfiles/git/github.gitconfig
+  path = ~/dotfiles/.output/git/github.gitconfig
 
 [includeIf "hasconfig:remote.*.url:git@ntfairfaxdev:v3/ntfairfaxdev/**"]
-  path = ~/dotfiles/git/ntfairfaxdev.gitconfig
+  path = ~/dotfiles/.output/git/ntfairfaxdev.gitconfig
 
 [includeIf "hasconfig:remote.*.url:git@fairfaxbr:v3/Fairfax-BR/**"]
-  path = ~/dotfiles/git/fairfaxbr.gitconfig
+  path = ~/dotfiles/.output/git/fairfaxbr.gitconfig
